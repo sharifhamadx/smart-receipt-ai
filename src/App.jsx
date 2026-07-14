@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './supabase'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenerativeAI } from './LocalAI.js'
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import './App.css'
 

@@ -45,7 +45,8 @@ const printStyles = `
 `;
 
 function App() {
-  const [lang, setLang] = useState('ar');
+  const [lang, setLang] = useState('ar')
+  const [trash, setTrash] = useState(() => JSON.parse(localStorage.getItem('trash') || '[]'));;
   const t = translations[lang] || translations['en'];
 
   // 🌑 حالة الوضع الليلي

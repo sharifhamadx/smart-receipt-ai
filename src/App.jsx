@@ -212,6 +212,40 @@ function App() {
   const handleChartClick = (data) => setActiveCategory(activeCategory === data.name ? null : data.name);
   const handleLegendClick = (data) => setActiveCategory(activeCategory === data.value ? null : data.value);
 
+  const moveToTrash = (id) => {
+        if(window.confirm('هل تريد نقل الفاتورة لسلة المهملات؟')) {
+            const newReceipts = receipts.filter(r => r.id !== id);
+            const item = receipts.find(r => r.id === id);
+            if(item) {
+                item.deletedAt = Date.now();
+                const newTrash = [...trash, item];
+                setReceipts(newReceipts);
+                setTrash(newTrash);
+                localStorage.setItem('receipts', JSON.stringify(newReceipts));
+                localStorage.setItem('trash', JSON.stringify(newTrash));
+            }
+        }
+    };
+    const restoreItem = (id) => {
+        const newTrash = trash.filter(r => r.id !== id);
+        const item = trash.find(r => r.id === id);
+        if(item) {
+            delete item.deletedAt;
+            const newReceipts = [...receipts, item];
+            setReceipts(newReceipts);
+            setTrash(newTrash);
+            localStorage.setItem('receipts', JSON.stringify(newReceipts));
+            localStorage.setItem('trash', JSON.stringify(newTrash));
+        }
+    };
+    const permDelete = (id) => {
+        if(window.confirm('حذف نهائي؟ لا يمكن التراجع!')) {
+            const newTrash = trash.filter(r => r.id !== id);
+            setTrash(newTrash);
+            localStorage.setItem('trash', JSON.stringify(newTrash));
+        }
+    };
+    
   return (
     <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className="container" style={{maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: '"Inter", sans-serif', background: theme.bg, minHeight: '100vh', transition: 'background 0.3s ease'}}>
       <style>{printStyles}</style>

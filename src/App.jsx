@@ -133,7 +133,34 @@ function App() {
       const reader = new FileReader();
       reader.onloadend = () => resolve({ inlineData: { data: reader.result.split(',')[1], mimeType: file.type }});
       reader.readAsDataURL(file);
-    });
+    }
+    {/* الزر العائم */}
+    <button onClick={() => setShowTrash(true)} style={{position:'fixed', bottom:'30px', left:'30px', background:'#ef4444', color:'white', border:'none', borderRadius:'50%', width:'65px', height:'65px', fontSize:'1.8rem', boxShadow:'0 4px 15px rgba(239,68,68,0.5)', cursor:'pointer', zIndex:9998, display:'flex', justifyContent:'center', alignItems:'center', transition:'transform 0.2s'}}>🗑️<span style={{position:'absolute', top:'-2px', right:'-2px', background:'white', color:'#ef4444', fontSize:'0.9rem', fontWeight:'bold', borderRadius:'50%', width:'24px', height:'24px', display:'flex', justifyContent:'center', alignItems:'center', border:'2px solid #ef4444'}}>{trash.length}</span></button>
+
+    {/* نافذة سلة المهملات */}
+    {showTrash && (
+        <div style={{position:'fixed', top:0, left:0, width:'100%', height:'100%', background:'rgba(0,0,0,0.7)', zIndex:9999, display:'flex', justifyContent:'center', alignItems:'center', padding:'20px'}}>
+            <div style={{background:'#fff', padding:'20px', borderRadius:'15px', width:'100%', maxWidth:'500px', maxHeight:'80vh', overflowY:'auto', boxShadow:'0 10px 25px rgba(0,0,0,0.2)'}}>
+                <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:'1px solid #eee', paddingBottom:'15px', marginBottom:'15px'}}>
+                    <h2 style={{margin:0, color:'#333'}}>🗑️ سلة المهملات</h2>
+                    <button onClick={() => setShowTrash(false)} style={{background:'#f3f4f6', border:'none', width:'35px', height:'35px', borderRadius:'50%', fontSize:'1.2rem', cursor:'pointer', color:'#666'}}>✖</button>
+                </div>
+                {trash.length === 0 ? <p style={{textAlign:'center', color:'#888', padding:'30px 0', fontSize:'1.1rem'}}>السلة فارغة حالياً</p> : (
+                    trash.map((t, i) => (
+                        <div key={i} style={{border:'1px solid #eee', padding:'15px', borderRadius:'10px', marginBottom:'10px', background:'#f9fafb'}}>
+                            <div style={{fontWeight:'bold', color:'#333', fontSize:'1.1rem'}}>{t.merchant || 'غير محدد'}</div>
+                            <div style={{color:'#2563eb', fontWeight:'bold', marginTop:'5px'}}>{t.total} {t.currency}</div>
+                            <div style={{display:'flex', gap:'10px', marginTop:'15px'}}>
+                                <button onClick={() => restoreItem(t)} style={{flex:1, background:'#10b981', color:'white', border:'none', padding:'10px', borderRadius:'8px', cursor:'pointer', fontWeight:'bold'}}>✨ استعادة</button>
+                                <button onClick={() => permDelete(t.id)} style={{flex:1, background:'#ef4444', color:'white', border:'none', padding:'10px', borderRadius:'8px', cursor:'pointer', fontWeight:'bold'}}>🔥 حذف نهائي</button>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+        </div>
+    )}
+);
   }
 
   const handleAnalyze = async () => {
@@ -402,6 +429,7 @@ function App() {
                      <div style={{marginTop: '8px', fontSize: '0.75rem', color: theme.subText}}>
                         <span style={{display: 'block', marginBottom: '3px'}}>📅 {t.invoiceDate} {item.date && item.date !== 'Unknown' && item.date !== 'null' ? item.date : t.unknownDate}</span>
                         <span style={{display: 'block'}}>☁️ {t.uploadDate} {new Date(item.created_at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US')}</span>
+<div style={{marginTop:'12px', display:'flex', justifyContent:'flex-end'}}><button onClick={(e) => { e.stopPropagation(); moveToTrash(item); }} style={{background:'#fee2e2', color:'#ef4444', border:'none', padding:'6px 14px', borderRadius:'8px', cursor:'pointer', fontWeight:'bold'}}>🗑️ حذف</button></div>
                      </div>
                    </div>
                    <strong style={{color: isDarkMode ? '#60a5fa' : '#0052cc', fontSize: '1.3rem', direction: 'ltr'}}>{item.total && item.total !== 'null' ? item.total : '0.00'}</strong>
